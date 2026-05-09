@@ -131,13 +131,7 @@ export function Services() {
                 {srv.description}
               </p>
 
-              <div className="flex items-center justify-between pt-4 border-t border-cream-200">
-                <span className="font-sans text-xs text-gray-400 flex items-center gap-1">
-                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  {srv.duration}
-                </span>
+              <div className="flex items-center justify-end pt-4 border-t border-cream-200">
                 <Link
                   href="/reservar"
                   className="font-sans text-xs text-teal-500 hover:text-teal-600 font-medium flex items-center gap-1 group-hover:gap-2 transition-all"
