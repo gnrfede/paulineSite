@@ -27,6 +27,7 @@ export interface BlockedDate {
 export interface Booking {
   id: string;
   serviceId: string;
+  serviceIds?: string | null; // JSON array string: '["id1","id2"]'
   service: Service;
   date: string;
   timeSlot: string;

@@ -4,7 +4,7 @@ import { createBookingSchema } from "@/lib/validations";
 import { getAdminFromCookie } from "@/lib/auth";
 import { getAvailableSlots } from "@/lib/availability";
 
-// GET /api/bookings — admin only, returns all bookings
+// GET /api/bookings — admin only
 export async function GET(req: NextRequest) {
   const admin = await getAdminFromCookie();
   if (!admin) {
@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
   return NextResponse.json(bookings);
 }
 
-// POST /api/bookings — public, create a new booking
+// POST /api/bookings — public
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -41,18 +41,25 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { serviceId, date, timeSlot, name, email, phone, notes } = parsed.data;
+    const { serviceIds, date, timeSlot, name, email, phone, notes } = parsed.data;
 
-    // Verify service exists and is active
-    const service = await prisma.service.findFirst({
-      where: { id: serviceId, active: true },
+    // Fetch all selected services
+    const services = await prisma.service.findMany({
+      where: { id: { in: serviceIds }, active: true },
     });
-    if (!service) {
-      return NextResponse.json({ error: "Servicio no encontrado" }, { status: 404 });
+
+    if (services.length !== serviceIds.length) {
+      return NextResponse.json(
+        { error: "Uno o más servicios no están disponibles" },
+        { status: 404 }
+      );
     }
 
-    // Verify slot is still available
-    const available = await getAvailableSlots(date, service.duration);
+    // Total duration = sum of all services
+    const totalDuration = services.reduce((sum, s) => sum + s.duration, 0);
+
+    // Verify the slot is still available for the total duration
+    const available = await getAvailableSlots(date, totalDuration);
     if (!available.includes(timeSlot)) {
       return NextResponse.json(
         { error: "El horario seleccionado ya no está disponible" },
@@ -61,11 +68,22 @@ export async function POST(req: NextRequest) {
     }
 
     const booking = await prisma.booking.create({
-      data: { serviceId, date, timeSlot, name, email, phone, notes, status: "PENDING" },
+      data: {
+        serviceId: serviceIds[0],             // primary for DB relation
+        serviceIds: JSON.stringify(serviceIds), // all selected
+        date,
+        timeSlot,
+        name,
+        email,
+        phone,
+        notes,
+        status: "PENDING",
+      },
       include: { service: true },
     });
 
-    return NextResponse.json(booking, { status: 201 });
+    // Attach full services list to the response
+    return NextResponse.json({ ...booking, allServices: services }, { status: 201 });
   } catch {
     return NextResponse.json({ error: "Error interno" }, { status: 500 });
   }

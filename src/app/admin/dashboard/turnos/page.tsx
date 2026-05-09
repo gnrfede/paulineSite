@@ -133,7 +133,11 @@ export default function TurnosAdminPage() {
                       </span>
                     </div>
                     <p className="font-sans text-xs text-gray-500 mt-0.5">
-                      {booking.service?.name} · {formatDate(booking.date)} · {booking.timeSlot} hs
+                      {booking.serviceIds
+                        ? (JSON.parse(booking.serviceIds) as string[]).length > 1
+                          ? `${booking.service?.name} +${(JSON.parse(booking.serviceIds) as string[]).length - 1} más`
+                          : booking.service?.name
+                        : booking.service?.name} · {formatDate(booking.date)} · {booking.timeSlot} hs
                     </p>
                     <p className="font-sans text-xs text-gray-400 mt-0.5">
                       {booking.email} · {booking.phone}

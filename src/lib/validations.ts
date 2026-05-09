@@ -1,13 +1,11 @@
 import { z } from "zod";
 
 export const createBookingSchema = z.object({
-  serviceId: z.string().min(1, "Seleccioná un servicio"),
-  date: z
-    .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/, "Formato de fecha inválido"),
-  timeSlot: z
-    .string()
-    .regex(/^\d{2}:\d{2}$/, "Formato de hora inválido"),
+  serviceIds: z
+    .array(z.string().min(1))
+    .min(1, "Seleccioná al menos un servicio"),
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Formato de fecha inválido"),
+  timeSlot: z.string().regex(/^\d{2}:\d{2}$/, "Formato de hora inválido"),
   name: z.string().min(2, "El nombre debe tener al menos 2 caracteres").max(100),
   email: z.string().email("Email inválido"),
   phone: z
