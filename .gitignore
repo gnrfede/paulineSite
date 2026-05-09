@@ -17,8 +17,9 @@ dev.db
 
 # Environment variables — NEVER subir al repo
 .env
-.env.local
+.env*.local
 .env.production
+.env.production.local
 
 # Prisma generated (se regenera con npm install)
 # node_modules/@prisma ya está ignorado arriba
