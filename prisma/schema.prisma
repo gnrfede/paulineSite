@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Service {
+  id          String    @id @default(cuid())
+  name        String
+  description String
+  duration    Int       // minutes
+  price       Float?
+  active      Boolean   @default(true)
+  order       Int       @default(0)
+  bookings    Booking[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+// Working hours per day of week
+model Schedule {
+  id        String  @id @default(cuid())
+  dayOfWeek Int     // 0=Sun, 1=Mon, ..., 6=Sat
+  startTime String  // "09:00"
+  endTime   String  // "18:00"
+  active    Boolean @default(true)
+}
+
+// Specific dates blocked (holidays, vacations)
+model BlockedDate {
+  id     String  @id @default(cuid())
+  date   String  @unique // "YYYY-MM-DD"
+  reason String?
+}
+
+// status: "PENDING" | "CONFIRMED" | "REJECTED" | "CANCELLED"
+// Using String for SQLite compatibility (enums not supported)
+model Booking {
+  id        String   @id @default(cuid())
+  service   Service  @relation(fields: [serviceId], references: [id])
+  serviceId String
+  date      String   // "YYYY-MM-DD"
+  timeSlot  String   // "10:00"
+  name      String
+  email     String
+  phone     String
+  notes     String?
+  status    String   @default("PENDING")
+  adminNote String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

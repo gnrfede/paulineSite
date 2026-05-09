@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+
+# Next.js
+.next/
+out/
+
+# Production build
+build/
+
+# Database (local SQLite)
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+dev.db
+
+# Environment variables — NEVER subir al repo
+.env
+.env.local
+.env.production
+
+# Prisma generated (se regenera con npm install)
+# node_modules/@prisma ya está ignorado arriba
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/settings.json
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Vercel
+.vercel
