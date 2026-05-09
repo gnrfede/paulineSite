@@ -28,19 +28,16 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ date, slots: [] });
   }
 
+  // Validate that at least one service exists (keeps the param for API consistency)
   const serviceIdList = rawIds.split(",").map((s) => s.trim()).filter(Boolean);
-
-  const services = await prisma.service.findMany({
+  const count = await prisma.service.count({
     where: { id: { in: serviceIdList }, active: true },
   });
-
-  if (services.length === 0) {
+  if (count === 0) {
     return NextResponse.json({ error: "Servicios no encontrados" }, { status: 404 });
   }
 
-  // Total duration = sum of all selected services
-  const totalDuration = services.reduce((sum, s) => sum + s.duration, 0);
-
-  const slots = await getAvailableSlots(date, totalDuration);
+  // Slots depend only on the schedule and existing bookings, not on service duration
+  const slots = await getAvailableSlots(date);
   return NextResponse.json({ date, slots });
 }

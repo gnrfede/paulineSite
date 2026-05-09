@@ -1,19 +1,7 @@
 import { prisma } from "./db";
 
-function timeToMinutes(time: string): number {
-  const [h, m] = time.split(":").map(Number);
-  return h * 60 + m;
-}
-
-function minutesToTime(minutes: number): string {
-  const h = Math.floor(minutes / 60).toString().padStart(2, "0");
-  const m = (minutes % 60).toString().padStart(2, "0");
-  return `${h}:${m}`;
-}
-
 export async function getAvailableSlots(
   date: string,
-  serviceDuration: number
 ): Promise<string[]> {
   const d = new Date(date + "T00:00:00");
   const dayOfWeek = d.getDay();
@@ -28,39 +16,36 @@ export async function getAvailableSlots(
   });
   if (!schedule) return [];
 
-  // Get existing confirmed/pending bookings for this date
-  const existingBookings = await prisma.booking.findMany({
-    where: { date, status: { in: ["PENDING", "CONFIRMED"] } },
-    include: { service: true },
-  });
-
-  const occupied: Array<{ start: number; end: number }> = existingBookings.map((b) => ({
-    start: timeToMinutes(b.timeSlot),
-    end: timeToMinutes(b.timeSlot) + b.service.duration,
-  }));
-
-  function isAvailable(slotTime: string): boolean {
-    const start = timeToMinutes(slotTime);
-    const end = start + serviceDuration;
-    return !occupied.some((o) => start < o.end && end > o.start);
-  }
+  // Slots already taken on this date (any status that occupies the seat)
+  const takenSlots = new Set(
+    (
+      await prisma.booking.findMany({
+        where: { date, status: { in: ["PENDING", "CONFIRMED"] } },
+        select: { timeSlot: true },
+      })
+    ).map((b) => b.timeSlot)
+  );
 
   // Mode 1: specific slots defined in the schedule
   if (schedule.slots) {
     return schedule.slots
       .split(",")
       .map((s) => s.trim())
-      .filter((s) => /^\d{2}:\d{2}$/.test(s) && isAvailable(s));
+      .filter((s) => /^\d{2}:\d{2}$/.test(s) && !takenSlots.has(s));
   }
 
   // Mode 2: generate slots every 30 min within the working range
-  const startMin = timeToMinutes(schedule.startTime);
-  const endMin = timeToMinutes(schedule.endTime);
+  const [sh, sm] = schedule.startTime.split(":").map(Number);
+  const [eh, em] = schedule.endTime.split(":").map(Number);
+  const startMin = sh * 60 + sm;
+  const endMin = eh * 60 + em;
   const slots: string[] = [];
 
-  for (let t = startMin; t + serviceDuration <= endMin; t += 30) {
-    const slotTime = minutesToTime(t);
-    if (isAvailable(slotTime)) slots.push(slotTime);
+  for (let t = startMin; t < endMin; t += 30) {
+    const hh = Math.floor(t / 60).toString().padStart(2, "0");
+    const mm = (t % 60).toString().padStart(2, "0");
+    const slot = `${hh}:${mm}`;
+    if (!takenSlots.has(slot)) slots.push(slot);
   }
 
   return slots;

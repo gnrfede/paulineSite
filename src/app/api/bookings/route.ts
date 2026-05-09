@@ -55,11 +55,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Total duration = sum of all services
-    const totalDuration = services.reduce((sum, s) => sum + s.duration, 0);
-
-    // Verify the slot is still available for the total duration
-    const available = await getAvailableSlots(date, totalDuration);
+    // Verify the slot is still free (availability is slot-based, not duration-based)
+    const available = await getAvailableSlots(date);
     if (!available.includes(timeSlot)) {
       return NextResponse.json(
         { error: "El horario seleccionado ya no está disponible" },
