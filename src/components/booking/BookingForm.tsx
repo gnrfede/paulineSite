@@ -254,7 +254,6 @@ export function BookingForm({ services }: { services: Service[] }) {
                       <p className={`font-sans text-sm font-medium ${form.serviceId === srv.id ? "text-teal-700" : "text-gray-700"}`}>
                         {srv.name}
                       </p>
-                      <p className="font-sans text-xs text-gray-400 mt-0.5">{srv.duration} min</p>
                     </div>
                     {form.serviceId === srv.id && (
                       <div className="w-5 h-5 bg-teal-400 rounded-full flex items-center justify-center">
