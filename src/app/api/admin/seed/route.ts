@@ -20,12 +20,13 @@ export async function POST(req: NextRequest) {
   await prisma.service.createMany({
     data: [
       { name: "Peeling Químico", description: "Renovación celular controlada para manchas, acné, poros dilatados y textura irregular. Protocolos por ácidos adaptados a cada tipo de piel.", duration: 60, price: 15000, order: 1 },
-      { name: "Dermapen · Microneedling", description: "Estimulación de colágeno mediante microagujas para rejuvenecimiento, cicatrices de acné y mejorar la calidad general de la piel.", duration: 75, price: 18000, order: 2 },
-      { name: "Limpieza Facial Profunda", description: "Extracción profesional, higiene y equilibrio del manto hidrolipídico. La base de cualquier tratamiento efectivo.", duration: 60, price: 12000, order: 3 },
+      { name: "Microneedling", description: "Estimulación de colágeno mediante microagujas para rejuvenecimiento, cicatrices de acné y mejorar la calidad general de la piel.", duration: 75, price: 18000, order: 2 },
+      { name: "Higiene Profunda", description: "Extracción profesional, higiene y equilibrio del manto hidrolipídico. La base de cualquier tratamiento efectivo.", duration: 60, price: 12000, order: 3 },
       { name: "Radiofrecuencia", description: "Tecnología de calor controlado para reafirmar y tonificar la piel, estimulando la producción natural de colágeno y elastina.", duration: 60, price: 16000, order: 4 },
-      { name: "Dermaplane", description: "Exfoliación mecánica que elimina células muertas y vello facial, dejando una piel lisa, luminosa y lista para absorber activos.", duration: 45, price: 11000, order: 5 },
+      { name: "Dermaplaning", description: "Exfoliación mecánica que elimina células muertas y vello facial, dejando una piel lisa, luminosa y lista para absorber activos.", duration: 45, price: 11000, order: 5 },
       { name: "Peeling Enzimático", description: "Exfoliación suave y profunda con enzimas naturales, ideal para pieles sensibles o reactivas que necesitan renovación sin agresión.", duration: 45, price: 11000, order: 6 },
-      { name: "Consulta de Diagnóstico", description: "Primera consulta personalizada. Evaluamos tu piel en profundidad y diseñamos el protocolo exacto que necesitás.", duration: 30, price: 5000, order: 7 },
+      { name: "Punta de Diamante", description: "Exfoliación mecánica con micropartículas de diamante que elimina células muertas, puntos negros e impurezas. Mejora la textura y luminosidad de la piel.", duration: 45, price: 10000, order: 7 },
+      { name: "Consulta de Diagnóstico", description: "Primera consulta personalizada. Evaluamos tu piel en profundidad y diseñamos el protocolo exacto que necesitás.", duration: 30, price: 5000, order: 8 },
     ],
   });
 

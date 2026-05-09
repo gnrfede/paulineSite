@@ -1,9 +1,9 @@
 const items = [
   "Peeling Químico",
-  "Dermapen · Microneedling",
-  "Limpieza Facial Profunda",
+  "Microneedling",
+  "Higiene Profunda",
   "Radiofrecuencia",
-  "Dermaplane",
+  "Dermaplaning",
   "Peeling Enzimático",
   "Punta de Diamante",
   "Consulta de Diagnóstico",

@@ -20,7 +20,7 @@ const services = [
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.3} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
       </svg>
     ),
-    name: "Dermapen · Microneedling",
+    name: "Microneedling",
     description: "Estimulación de colágeno mediante microagujas para rejuvenecimiento, cicatrices de acné y mejorar la calidad general de la piel.",
     duration: "75 min",
     tag: "Facial",
@@ -32,7 +32,7 @@ const services = [
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.3} d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11" />
       </svg>
     ),
-    name: "Limpieza Facial Profunda",
+    name: "Higiene Profunda",
     description: "Extracción profesional, higiene y equilibrio del manto hidrolipídico. La base de cualquier tratamiento efectivo.",
     duration: "60 min",
     tag: "Facial",
@@ -56,7 +56,7 @@ const services = [
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.3} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
       </svg>
     ),
-    name: "Dermaplane",
+    name: "Dermaplaning",
     description: "Exfoliación mecánica que elimina células muertas y vello facial, dejando una piel lisa, luminosa y lista para absorber activos.",
     duration: "45 min",
     tag: "Facial",
@@ -70,6 +70,18 @@ const services = [
     ),
     name: "Peeling Enzimático",
     description: "Exfoliación suave y profunda con enzimas naturales, ideal para pieles sensibles o reactivas que necesitan renovación sin agresión.",
+    duration: "45 min",
+    tag: "Facial",
+  },
+  {
+    num: "07",
+    icon: (
+      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.3} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+      </svg>
+    ),
+    name: "Punta de Diamante",
+    description: "Exfoliación mecánica con micropartículas de diamante que elimina células muertas, puntos negros e impurezas. Mejora la textura y luminosidad de la piel.",
     duration: "45 min",
     tag: "Facial",
   },

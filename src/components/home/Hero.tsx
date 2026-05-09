@@ -28,10 +28,12 @@ function LeafDecor({ className }: { className?: string }) {
 
 const treatments = [
   { label: "Peeling Químico", icon: "⚗️" },
-  { label: "Dermapen", icon: "✦" },
-  { label: "Limpieza Facial", icon: "✿" },
+  { label: "Microneedling", icon: "✦" },
+  { label: "Higiene Profunda", icon: "✿" },
   { label: "Radiofrecuencia", icon: "〰" },
-  { label: "Dermaplane", icon: "✧" },
+  { label: "Dermaplaning", icon: "✧" },
+  { label: "Punta de Diamante", icon: "💎" },
+  { label: "Peeling Enzimático", icon: "🌿" },
 ];
 
 export function Hero() {
