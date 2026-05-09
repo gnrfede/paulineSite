@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -37,7 +37,6 @@ model BlockedDate {
 }
 
 // status: "PENDING" | "CONFIRMED" | "REJECTED" | "CANCELLED"
-// Using String for SQLite compatibility (enums not supported)
 model Booking {
   id        String   @id @default(cuid())
   service   Service  @relation(fields: [serviceId], references: [id])
