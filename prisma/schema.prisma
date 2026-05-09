@@ -24,8 +24,9 @@ model Service {
 model Schedule {
   id        String  @id @default(cuid())
   dayOfWeek Int     // 0=Sun, 1=Mon, ..., 6=Sat
-  startTime String  // "09:00"
-  endTime   String  // "18:00"
+  startTime String  @default("09:00")
+  endTime   String  @default("18:00")
+  slots     String? // "12:00,14:00" — specific slots; overrides startTime/endTime when set
   active    Boolean @default(true)
 }
 
