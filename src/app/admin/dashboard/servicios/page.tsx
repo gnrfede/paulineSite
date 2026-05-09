@@ -140,15 +140,20 @@ export default function ServiciosAdminPage() {
               />
             </div>
             <div>
-              <label className="block font-sans text-xs text-gray-500 mb-1.5">Precio (opcional)</label>
-              <input
-                type="number"
-                value={form.price}
-                onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))}
-                className="input-field"
-                placeholder="15000"
-                min={0}
-              />
+              <label className="block font-sans text-xs text-gray-500 mb-1.5">
+                Precio <span className="text-teal-500 font-medium">(se muestra en la página)</span>
+              </label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 font-sans text-sm text-gray-400">$</span>
+                <input
+                  type="number"
+                  value={form.price}
+                  onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))}
+                  className="input-field pl-7"
+                  placeholder="45000"
+                  min={0}
+                />
+              </div>
             </div>
             <div>
               <label className="block font-sans text-xs text-gray-500 mb-1.5">Orden</label>
@@ -222,10 +227,12 @@ export default function ServiciosAdminPage() {
                       </svg>
                       {srv.duration} min
                     </span>
-                    {srv.price && (
-                      <span className="font-sans text-xs text-gray-500">
-                        ${srv.price.toLocaleString("es-AR")}
+                    {srv.price != null ? (
+                      <span className="font-sans text-sm font-semibold text-teal-600">
+                        {new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 }).format(srv.price)}
                       </span>
+                    ) : (
+                      <span className="font-sans text-xs text-gray-400 italic">Sin precio</span>
                     )}
                   </div>
                 </div>

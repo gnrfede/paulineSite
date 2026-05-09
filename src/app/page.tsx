@@ -7,8 +7,16 @@ import { Services } from "@/components/home/Services";
 import { Gallery } from "@/components/home/Gallery";
 import { Testimonials } from "@/components/home/Testimonials";
 import { ContactSection } from "@/components/home/ContactSection";
+import { prisma } from "@/lib/db";
 
-export default function HomePage() {
+export const dynamic = "force-dynamic";
+
+export default async function HomePage() {
+  const services = await prisma.service.findMany({
+    where: { active: true },
+    orderBy: { order: "asc" },
+  });
+
   return (
     <>
       <Navbar />
@@ -16,7 +24,7 @@ export default function HomePage() {
         <Hero />
         <Ticker />
         <About />
-        <Services />
+        <Services services={services} />
         <Gallery />
         <Testimonials />
         <ContactSection />
