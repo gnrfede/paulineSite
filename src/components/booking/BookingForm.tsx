@@ -56,6 +56,8 @@ export function BookingForm({ services }: { services: Service[] }) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [confirmed, setConfirmed] = useState<ConfirmedBooking | null>(null);
   const [serverError, setServerError] = useState("");
+  const [monthAvailability, setMonthAvailability] = useState<Record<string, number>>({});
+  const [availLoading, setAvailLoading] = useState(false);
 
   const selectedServices = services.filter((s) => form.serviceIds.includes(s.id));
 
@@ -67,7 +69,6 @@ export function BookingForm({ services }: { services: Service[] }) {
         serviceIds: already
           ? f.serviceIds.filter((sid) => sid !== id)
           : [...f.serviceIds, id],
-        // reset date/time when services change
         date: "",
         timeSlot: "",
       };
@@ -92,9 +93,31 @@ export function BookingForm({ services }: { services: Service[] }) {
     }
   }, [form.serviceIds, form.date]);
 
+  const fetchMonthAvailability = useCallback(async (year: number, month: number) => {
+    setAvailLoading(true);
+    try {
+      const res = await fetch(`/api/availability/month?year=${year}&month=${month}`);
+      const data = await res.json();
+      setMonthAvailability((prev) => ({ ...prev, ...data.availability }));
+    } catch {
+      // silently ignore — calendar degrades gracefully
+    } finally {
+      setAvailLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     if (form.serviceIds.length > 0 && form.date) fetchSlots();
   }, [fetchSlots]);
+
+  useEffect(() => {
+    if (form.serviceIds.length > 0) {
+      const now = new Date();
+      fetchMonthAvailability(now.getFullYear(), now.getMonth() + 1);
+    } else {
+      setMonthAvailability({});
+    }
+  }, [form.serviceIds, fetchMonthAvailability]);
 
   function setField(key: keyof FormData, value: string) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -155,7 +178,6 @@ export function BookingForm({ services }: { services: Service[] }) {
     }
   }
 
-  // ── Success screen ──────────────────────────────────────────────
   if (confirmed) {
     const serviceNames = (confirmed.allServices ?? [confirmed.service])
       .map((s) => s.name)
@@ -212,7 +234,6 @@ export function BookingForm({ services }: { services: Service[] }) {
     );
   }
 
-  // ── Step indicator ──────────────────────────────────────────────
   return (
     <div>
       <div className="flex items-center gap-3 mb-8">
@@ -235,11 +256,8 @@ export function BookingForm({ services }: { services: Service[] }) {
         ))}
       </div>
 
-      {/* ── Step 1: Services + Date + Time ── */}
       {step === 1 && (
         <div className="space-y-8">
-
-          {/* Multi-select services */}
           <div>
             <label className="block font-sans text-xs font-medium tracking-[0.12em] uppercase text-gray-500 mb-1">
               Elegí uno o más servicios
@@ -260,7 +278,6 @@ export function BookingForm({ services }: { services: Service[] }) {
                     }`}
                   >
                     <div className="flex items-center gap-3">
-                      {/* Checkbox visual */}
                       <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 transition-colors ${
                         selected ? "bg-teal-400 border-teal-400" : "border-gray-300"
                       }`}>
@@ -279,7 +296,6 @@ export function BookingForm({ services }: { services: Service[] }) {
               })}
             </div>
 
-            {/* Selected summary */}
             {selectedServices.length > 0 && (
               <div className="mt-3 flex flex-wrap gap-1.5">
                 {selectedServices.map((s) => (
@@ -300,7 +316,6 @@ export function BookingForm({ services }: { services: Service[] }) {
             {errors.serviceIds && <p className="font-sans text-xs text-red-500 mt-2">{errors.serviceIds}</p>}
           </div>
 
-          {/* Calendar */}
           {form.serviceIds.length > 0 && (
             <div>
               <label className="block font-sans text-xs font-medium tracking-[0.12em] uppercase text-gray-500 mb-3">
@@ -309,12 +324,14 @@ export function BookingForm({ services }: { services: Service[] }) {
               <BookingCalendar
                 selectedDate={form.date}
                 onSelectDate={(d) => setField("date", d)}
+                availabilityMap={form.serviceIds.length > 0 ? monthAvailability : undefined}
+                loadingAvailability={availLoading}
+                onMonthChange={(year, month) => fetchMonthAvailability(year, month)}
               />
               {errors.date && <p className="font-sans text-xs text-red-500 mt-2">{errors.date}</p>}
             </div>
           )}
 
-          {/* Time slots */}
           {form.date && (
             <div>
               <label className="block font-sans text-xs font-medium tracking-[0.12em] uppercase text-gray-500 mb-3">
@@ -343,10 +360,8 @@ export function BookingForm({ services }: { services: Service[] }) {
         </div>
       )}
 
-      {/* ── Step 2: Customer details ── */}
       {step === 2 && (
         <div className="space-y-5">
-          {/* Summary */}
           <div className="bg-teal-50 rounded-xl p-4 border border-teal-100">
             <p className="font-sans text-xs text-teal-600 font-medium mb-1">
               {selectedServices.map((s) => s.name).join(" + ")}
@@ -394,7 +409,6 @@ export function BookingForm({ services }: { services: Service[] }) {
         </div>
       )}
 
-      {/* ── Step 3: Review + Submit ── */}
       {step === 3 && (
         <div className="space-y-6">
           <div className="bg-cream-100 rounded-2xl p-5 space-y-4">

@@ -117,6 +117,10 @@
   @apply border border-teal-300;
 }
 
+.calendar-day.available {
+  @apply bg-teal-50 text-teal-700 font-medium;
+}
+
 .calendar-day.unavailable {
   @apply text-gray-300 cursor-not-allowed;
 }
