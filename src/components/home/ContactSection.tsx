@@ -86,7 +86,7 @@ export function ContactSection() {
               <div className="space-y-2">
                 {[
                   { days: "Lunes a Viernes", hours: "9:00 – 19:00" },
-                  { days: "Sábados", hours: "9:00 – 14:00" },
+                  { days: "Sábados", hours: "12:00 – 16:00" },
                   { days: "Domingos", hours: "Cerrado" },
                 ].map((h) => (
                   <div key={h.days} className="flex justify-between items-center">
@@ -116,7 +116,7 @@ export function ContactSection() {
                   <em className="italic">diagnóstico real.</em>
                 </h3>
                 <p className="font-sans text-sm opacity-80 leading-relaxed mb-8">
-                  Sin compromiso. Evaluamos tu piel en profundidad y diseñamos el protocolo exacto que necesitás.
+                  Evaluamos tu piel en profundidad y diseñamos el protocolo exacto que necesitás.
                 </p>
 
                 <div className="flex flex-col gap-3">
@@ -129,14 +129,6 @@ export function ContactSection() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                     </svg>
                   </Link>
-                  <a
-                    href="https://wa.me/5491134193424"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-2 border border-white/40 text-white font-sans font-medium text-sm tracking-wide px-6 py-3.5 rounded-full hover:bg-white/10 transition-colors"
-                  >
-                    Escribir por WhatsApp
-                  </a>
                 </div>
               </div>
             </div>

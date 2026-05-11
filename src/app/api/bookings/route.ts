@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { createBookingSchema } from "@/lib/validations";
 import { getAdminFromCookie } from "@/lib/auth";
 import { getAvailableSlots } from "@/lib/availability";
+import { sendBookingRequestEmail, sendAdminNotificationEmail } from "@/lib/email";
 
 // GET /api/bookings — admin only
 export async function GET(req: NextRequest) {
@@ -35,10 +36,7 @@ export async function POST(req: NextRequest) {
     const parsed = createBookingSchema.safeParse(body);
 
     if (!parsed.success) {
-      return NextResponse.json(
-        { error: "Datos inválidos", issues: parsed.error.issues },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });
     }
 
     const { serviceIds, date, timeSlot, name, email, phone, notes } = parsed.data;
@@ -78,6 +76,24 @@ export async function POST(req: NextRequest) {
       },
       include: { service: true },
     });
+
+    const serviceNames = services.map((s) => s.name);
+
+    // Email al cliente
+    try {
+      await sendBookingRequestEmail({ to: email, name, serviceNames, date, timeSlot, phone, notes });
+      console.log("[email] booking request sent to", email);
+    } catch (err) {
+      console.error("[email] booking request failed:", err);
+    }
+
+    // Notificación al admin
+    try {
+      await sendAdminNotificationEmail({ bookingId: booking.id, name, email, phone, serviceNames, date, timeSlot, notes });
+      console.log("[email] admin notification sent");
+    } catch (err) {
+      console.error("[email] admin notification failed:", err);
+    }
 
     // Attach full services list to the response
     return NextResponse.json({ ...booking, allServices: services }, { status: 201 });

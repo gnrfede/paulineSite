@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { updateBookingSchema } from "@/lib/validations";
 import { getAdminFromCookie } from "@/lib/auth";
+import { sendConfirmationEmail } from "@/lib/email";
 
 // GET /api/bookings/:id — admin only
 export async function GET(
@@ -45,6 +46,36 @@ export async function PATCH(
     data: parsed.data,
     include: { service: true },
   });
+
+  if (parsed.data.status === "CONFIRMED") {
+    try {
+      const rawServiceIds = (booking as Record<string, unknown>).serviceIds;
+      let serviceNames: string[];
+
+      if (typeof rawServiceIds === "string") {
+        const ids: string[] = JSON.parse(rawServiceIds);
+        const services = await prisma.service.findMany({
+          where: { id: { in: ids } },
+          select: { name: true },
+        });
+        serviceNames = services.map((s) => s.name);
+      } else {
+        serviceNames = [booking.service.name];
+      }
+
+      await sendConfirmationEmail({
+        to: booking.email,
+        name: booking.name,
+        serviceNames,
+        date: booking.date,
+        timeSlot: booking.timeSlot,
+        adminNote: booking.adminNote,
+      });
+      console.log("[email] confirmation sent to", booking.email);
+    } catch (err) {
+      console.error("[email] confirmation failed:", err);
+    }
+  }
 
   return NextResponse.json(booking);
 }

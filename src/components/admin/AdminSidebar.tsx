@@ -43,7 +43,7 @@ const navItems = [
   },
 ];
 
-export function AdminSidebar() {
+export function AdminSidebar({ onClose }: { onClose?: () => void }) {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -53,10 +53,10 @@ export function AdminSidebar() {
   }
 
   return (
-    <aside className="w-56 shrink-0 bg-white border-r border-cream-300 flex flex-col h-screen sticky top-0">
+    <aside className="w-56 shrink-0 bg-white border-r border-cream-300 flex flex-col h-screen">
       {/* Logo */}
       <div className="px-5 py-5 border-b border-cream-200">
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center justify-between gap-2.5">
           <div className="w-9 h-9 bg-teal-400 rounded-xl flex items-center justify-center">
             <FlowerSVG color="white" className="w-5 h-6" />
           </div>
@@ -64,6 +64,17 @@ export function AdminSidebar() {
             <div className="font-script text-sm text-gray-800 leading-tight">Pauline Studio</div>
             <div className="font-sans text-[9px] tracking-[0.2em] text-gray-400 uppercase">Admin</div>
           </div>
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="md:hidden p-1.5 rounded-lg hover:bg-cream-100 text-gray-400"
+              aria-label="Cerrar menú"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          )}
         </div>
       </div>
 

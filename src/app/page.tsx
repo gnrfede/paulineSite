@@ -4,7 +4,6 @@ import { Hero } from "@/components/home/Hero";
 import { Ticker } from "@/components/home/Ticker";
 import { About } from "@/components/home/About";
 import { Services } from "@/components/home/Services";
-import { Gallery } from "@/components/home/Gallery";
 import { Testimonials } from "@/components/home/Testimonials";
 import { ContactSection } from "@/components/home/ContactSection";
 import { prisma } from "@/lib/db";
@@ -25,7 +24,6 @@ export default async function HomePage() {
         <Ticker />
         <About />
         <Services services={services} />
-        <Gallery />
         <Testimonials />
         <ContactSection />
       </main>

@@ -2,12 +2,13 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import bcrypt from "bcryptjs";
+import { timingSafeEqual } from "crypto";
 
 export { COOKIE_NAME } from "./auth-edge";
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "fallback-secret-change-in-production"
-);
+const jwtSecretRaw = process.env.JWT_SECRET;
+if (!jwtSecretRaw) throw new Error("JWT_SECRET environment variable is required");
+const JWT_SECRET = new TextEncoder().encode(jwtSecretRaw);
 
 const COOKIE_NAME_LOCAL = "pauline_admin_token";
 
@@ -39,10 +40,16 @@ export async function getAdminFromCookie(): Promise<{ email: string; role: strin
   return verifyAdminToken(token);
 }
 
+function safeEqual(a: string, b: string): boolean {
+  const ba = Buffer.from(a);
+  const bb = Buffer.from(b);
+  return ba.length === bb.length && timingSafeEqual(ba, bb);
+}
+
 export function validateAdminCredentials(email: string, password: string): boolean {
-  const adminEmail = process.env.ADMIN_EMAIL || "admin@paulinestudio.com";
-  const adminPassword = process.env.ADMIN_PASSWORD || "admin123";
-  return email === adminEmail && password === adminPassword;
+  const adminEmail = process.env.ADMIN_EMAIL ?? "";
+  const adminPassword = process.env.ADMIN_PASSWORD ?? "";
+  return safeEqual(email, adminEmail) && safeEqual(password, adminPassword);
 }
 
 // Kept for completeness but not used (passwords not stored in DB)

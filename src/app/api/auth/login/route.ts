@@ -8,10 +8,7 @@ export async function POST(req: NextRequest) {
     const parsed = adminLoginSchema.safeParse(body);
 
     if (!parsed.success) {
-      return NextResponse.json(
-        { error: "Datos inválidos", issues: parsed.error.issues },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });
     }
 
     const { email, password } = parsed.data;

@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { getAdminFromCookie } from "@/lib/auth";
+import { createScheduleSchema } from "@/lib/validations";
+
+const updateScheduleSchema = createScheduleSchema.partial();
 
 export async function PATCH(
   req: NextRequest,
@@ -11,10 +14,12 @@ export async function PATCH(
 
   const { id } = await params;
   const body = await req.json();
+  const parsed = updateScheduleSchema.safeParse(body);
+  if (!parsed.success) return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });
 
   const schedule = await prisma.schedule.update({
     where: { id },
-    data: body,
+    data: parsed.data,
   });
   return NextResponse.json(schedule);
 }
