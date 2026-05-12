@@ -24,6 +24,15 @@ const navItems = [
     ),
   },
   {
+    href: "/admin/dashboard/nueva-reserva",
+    label: "Nueva reserva",
+    icon: (
+      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4v16m8-8H4" />
+      </svg>
+    ),
+  },
+  {
     href: "/admin/dashboard/servicios",
     label: "Servicios",
     icon: (
@@ -54,7 +63,6 @@ export function AdminSidebar({ onClose }: { onClose?: () => void }) {
 
   return (
     <aside className="w-56 shrink-0 bg-white border-r border-cream-300 flex flex-col h-screen">
-      {/* Logo */}
       <div className="px-5 py-5 border-b border-cream-200">
         <div className="flex items-center justify-between gap-2.5">
           <div className="w-9 h-9 bg-teal-400 rounded-xl flex items-center justify-center">
@@ -65,11 +73,7 @@ export function AdminSidebar({ onClose }: { onClose?: () => void }) {
             <div className="font-sans text-[9px] tracking-[0.2em] text-gray-400 uppercase">Admin</div>
           </div>
           {onClose && (
-            <button
-              onClick={onClose}
-              className="md:hidden p-1.5 rounded-lg hover:bg-cream-100 text-gray-400"
-              aria-label="Cerrar menú"
-            >
+            <button onClick={onClose} className="md:hidden p-1.5 rounded-lg hover:bg-cream-100 text-gray-400" aria-label="Cerrar menú">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
@@ -78,22 +82,16 @@ export function AdminSidebar({ onClose }: { onClose?: () => void }) {
         </div>
       </div>
 
-      {/* Nav */}
       <nav className="flex-1 px-3 py-4 space-y-0.5">
         {navItems.map((item) => {
           const isActive =
             item.href === "/admin/dashboard"
               ? pathname === "/admin/dashboard"
               : pathname.startsWith(item.href);
-
           return (
-            <Link
-              key={item.href}
-              href={item.href}
+            <Link key={item.href} href={item.href}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-xl font-sans text-sm transition-all duration-150 ${
-                isActive
-                  ? "bg-teal-50 text-teal-700 font-medium"
-                  : "text-gray-500 hover:bg-cream-100 hover:text-gray-700"
+                isActive ? "bg-teal-50 text-teal-700 font-medium" : "text-gray-500 hover:bg-cream-100 hover:text-gray-700"
               }`}
             >
               <span className={isActive ? "text-teal-500" : "text-gray-400"}>{item.icon}</span>
@@ -103,11 +101,8 @@ export function AdminSidebar({ onClose }: { onClose?: () => void }) {
         })}
       </nav>
 
-      {/* Links */}
       <div className="px-3 py-3 border-t border-cream-200 space-y-1">
-        <a
-          href="/"
-          target="_blank"
+        <a href="/" target="_blank"
           className="flex items-center gap-3 px-3 py-2 rounded-xl font-sans text-xs text-gray-400 hover:bg-cream-100 hover:text-gray-600 transition-colors"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -115,8 +110,7 @@ export function AdminSidebar({ onClose }: { onClose?: () => void }) {
           </svg>
           Ver sitio
         </a>
-        <button
-          onClick={handleLogout}
+        <button onClick={handleLogout}
           className="w-full flex items-center gap-3 px-3 py-2 rounded-xl font-sans text-xs text-gray-400 hover:bg-red-50 hover:text-red-500 transition-colors text-left"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
