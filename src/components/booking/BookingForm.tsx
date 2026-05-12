@@ -398,7 +398,7 @@ export function BookingForm({ services }: { services: Service[] }) {
           <div>
             <label className="block font-sans text-xs font-medium text-gray-500 mb-1.5">Notas (opcional)</label>
             <textarea value={form.notes} onChange={(e) => setField("notes", e.target.value)}
-              placeholder="Contame sobre tu piel, alergias, o cualquier consulta..."
+              placeholder="Contame sobre tu piel, alergias o cualquier consulta. Si necesitás algún producto, podés solicitarlo con anticipación y lo dejamos preparado para tu turno."
               rows={3} className="input-field resize-none" />
           </div>
 
