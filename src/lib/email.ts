@@ -298,3 +298,60 @@ function buildConfirmText({ name, serviceNames, formattedDate, timeSlot, adminNo
   const note = adminNote ? `\nNota del estudio: ${adminNote}` : "";
   return `Hola ${name},\n\nTu turno fue CONFIRMADO en Pauline Studio.\n\nServicio: ${serviceNames.join(", ")}\nFecha: ${formattedDate}\nHora: ${timeSlot} hs${note}\n\n⚠ POLÍTICA DE CANCELACIÓN: En caso de que no puedas asistir, te pedimos que nos avises con al menos 48 horas de anticipación. Esto nos permite reorganizar la agenda y ofrecer el turno a otros clientes. ¡Muchas gracias por tu comprensión!\n\nSi necesitás reprogramar, no dudes en contactarnos.\n\nPauline Studio`;
 }
+
+// ─── Email al cliente: recordatorio día anterior ───────────────────────────────────
+
+export interface ReminderEmailData {
+  to: string;
+  name: string;
+  serviceNames: string[];
+  date: string;
+  timeSlot: string;
+}
+
+export async function sendReminderEmail(data: ReminderEmailData): Promise<void> {
+  const { to, name, serviceNames, date, timeSlot } = data;
+  const formattedDate = fmtDate(date);
+  const adminEmail = "spinelli.paulaluciana@gmail.com";
+  const servicesHtml = serviceNames.map((s) => `<li style="margin:4px 0">${escapeHtml(s)}</li>`).join("");
+
+  const html = WRAP(`
+    ${HEADER("Recordatorio de turno para mañana")}
+    <tr><td style="padding:36px 40px">
+      <p style="margin:0 0 20px;font-size:17px;color:#333">Hola, <strong>${escapeHtml(name)}</strong>!</p>
+      <p style="margin:0 0 24px;font-size:15px;color:#555;line-height:1.6;font-family:sans-serif">
+        Te recordamos que mañana tenés turno en <strong>Pauline Studio</strong>. ¡Te esperamos!
+      </p>
+      ${DETAIL_TABLE([["Fecha", formattedDate], ["Hora", timeSlot + " hs"]], servicesHtml)}
+      <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:24px">
+        <tr><td style="padding:16px 20px;background:#F0FAF9;border-left:4px solid #6BBFB5;border-radius:0 6px 6px 0">
+          <p style="margin:0 0 4px;font-size:13px;font-weight:700;color:#2D6E68;font-family:sans-serif;text-transform:uppercase;letter-spacing:0.5px">📍 Ubicación</p>
+          <p style="margin:0;font-size:14px;color:#2D6E68;font-family:sans-serif">
+            Av. del Barco Centenera 150, Local 64 · Caballito, CABA
+          </p>
+        </td></tr>
+      </table>
+      <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:16px">
+        <tr><td style="padding:16px 20px;background:#FFF8E1;border-left:4px solid #F59E0B;border-radius:0 6px 6px 0">
+          <p style="margin:0 0 4px;font-size:13px;font-weight:700;color:#92400E;font-family:sans-serif;text-transform:uppercase;letter-spacing:0.5px">⚠ Política de cancelación</p>
+          <p style="margin:0;font-size:14px;color:#78350F;line-height:1.6;font-family:sans-serif">
+            Si no podés asistir, avisános con anticipación para reorganizar la agenda.
+          </p>
+        </td></tr>
+      </table>
+      <p style="margin:28px 0 0;font-size:14px;color:#777;line-height:1.6;font-family:sans-serif">
+        Ante cualquier consulta, escribínos por WhatsApp al <strong>11 3419-3424</strong>.
+      </p>
+    </td></tr>
+    ${FOOTER()}
+  `);
+
+  await createTransporter().sendMail({
+    from: FROM(),
+    to,
+    cc: adminEmail,
+    subject: `Recordatorio: Tu turno es mañana — Pauline Studio`,
+    html,
+    text: `Hola ${name},\n\nTe recordamos que mañana tenés turno en Pauline Studio.\n\nServicio: ${serviceNames.join(", ")}\nFecha: ${formattedDate}\nHora: ${timeSlot} hs\nUbicación: Av. del Barco Centenera 150, Local 64 · Caballito, CABA\n\nSi no podés asistir, avisános con anticipación.\nConsultas: WhatsApp 11 3419-3424\n\nPauline Studio`,
+  });
+}
