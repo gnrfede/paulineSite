@@ -58,7 +58,7 @@ export default function RootLayout({
       lang="es"
       className={`${dancingScript.variable} ${playfairDisplay.variable} ${dmSans.variable}`}
     >
-      <body>{children}</body>
+      <body className="overflow-x-hidden">{children}</body>
     </html>
   );
 }
