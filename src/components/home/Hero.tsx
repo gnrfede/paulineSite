@@ -1,6 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
-import { FlowerSVG } from "@/components/ui/LogoSVG";
 
 // Decorative botanical leaf SVG
 function LeafDecor({ className }: { className?: string }) {
@@ -17,7 +15,6 @@ function LeafDecor({ className }: { className?: string }) {
       <path d="M60 130 C60 130 85 105 95 88" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
       <path d="M60 100 C60 100 32 75 24 58" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
       <path d="M60 70 C60 70 82 50 90 36" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-      {/* Leaf blades */}
       <ellipse cx="20" cy="110" rx="18" ry="10" transform="rotate(-35 20 110)" fill="none" stroke="currentColor" strokeWidth="1.2" />
       <ellipse cx="95" cy="88" rx="18" ry="10" transform="rotate(35 95 88)" fill="none" stroke="currentColor" strokeWidth="1.2" />
       <ellipse cx="24" cy="58" rx="16" ry="9" transform="rotate(-30 24 58)" fill="none" stroke="currentColor" strokeWidth="1.2" />
@@ -53,98 +50,48 @@ export function Hero() {
       <LeafDecor className="leaf-decoration absolute top-20 right-8 w-16 h-28 text-teal-300" />
       <LeafDecor className="leaf-decoration absolute bottom-24 left-4 w-12 h-20 text-teal-300 scale-x-[-1]" />
 
-      <div className="relative z-10 max-w-6xl mx-auto px-6 pt-28 pb-20 w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
+      <div className="relative z-10 max-w-3xl mx-auto px-6 pt-28 pb-20 w-full text-center">
+        <p className="section-label justify-center mb-5">
+          Cosmetóloga · Cosmiatra · Buenos Aires
+        </p>
 
-          {/* Left: Text */}
-          <div className="text-center lg:text-left">
-            <p className="section-label justify-center lg:justify-start mb-5">
-              Cosmetóloga · Cosmiatra · Buenos Aires
-            </p>
+        <h1 className="font-serif text-5xl sm:text-6xl lg:text-7xl font-normal leading-[1.05] text-gray-800 mb-6">
+          Tu piel,{" "}
+          <em className="italic text-teal-500">sin filtros.</em>
+        </h1>
 
-            <h1 className="font-serif text-5xl sm:text-6xl lg:text-7xl font-normal leading-[1.05] text-gray-800 mb-6">
-              Tu piel,{" "}
-              <em className="italic text-teal-500">sin filtros.</em>
-            </h1>
+        <p className="font-sans text-base text-gray-500 leading-relaxed max-w-md mx-auto mb-8">
+          +13 años de experiencia. Atención 100% personalizada. Protocolos diseñados para <em>tu</em> piel, no para las tendencias.
+        </p>
 
-            <p className="font-sans text-base text-gray-500 leading-relaxed max-w-md mx-auto lg:mx-0 mb-8">
-              +13 años de experiencia. Atención 100% personalizada. Protocolos diseñados para <em>tu</em> piel, no para las tendencias.
-            </p>
+        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <Link href="/reservar" className="btn-primary">
+            Reservar turno
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </Link>
+          <Link href="/#servicios" className="btn-outline">
+            Ver servicios
+          </Link>
+        </div>
 
-            <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
-              <Link href="/reservar" className="btn-primary">
-                Reservar turno
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
-              </Link>
-              <Link href="/#servicios" className="btn-outline">
-                Ver servicios
-              </Link>
+        {/* Stats */}
+        <div className="flex gap-10 mt-12 justify-center">
+          {[
+            { n: "+13", label: "Años" },
+            { n: "100%", label: "Personalizado" },
+            { n: "3.8k", label: "Seguidores" },
+          ].map((s) => (
+            <div key={s.n} className="text-center">
+              <div className="font-serif text-2xl text-teal-500">{s.n}</div>
+              <div className="font-sans text-xs text-gray-400 tracking-wide mt-0.5">{s.label}</div>
             </div>
-
-            {/* Stats */}
-            <div className="flex gap-8 mt-12 justify-center lg:justify-start">
-              {[
-                { n: "+13", label: "Años" },
-                { n: "100%", label: "Personalizado" },
-                { n: "3.8k", label: "Seguidores" },
-              ].map((s) => (
-                <div key={s.n} className="text-center">
-                  <div className="font-serif text-2xl text-teal-500">{s.n}</div>
-                  <div className="font-sans text-xs text-gray-400 tracking-wide mt-0.5">{s.label}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Right: Visual grid */}
-          <div className="relative">
-            <div className="grid grid-cols-2 gap-3">
-              {/* Large image slot — uses real Instagram images */}
-              <div className="col-span-2 rounded-2xl overflow-hidden aspect-[16/7] bg-teal-100 relative">
-                <Image
-                  src="/images/tratamientos.jpeg"
-                  alt="Tratamientos Paula Spinelli"
-                  fill
-                  className="object-cover"
-                  priority
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-teal-900/30 to-transparent" />
-              </div>
-              <div className="rounded-2xl overflow-hidden aspect-square bg-blush-200 relative">
-                <Image
-                  src="/images/tratamiento 3.jpeg"
-                  alt="Tratamiento facial"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div className="rounded-2xl overflow-hidden aspect-square bg-cream-300 relative">
-                <Image
-                  src="/images/tratamiento 4.jpeg"
-                  alt="Resultado tratamiento"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-            </div>
-
-            {/* Badge */}
-            <div className="absolute -bottom-5 -left-4 bg-white border border-cream-300 rounded-2xl shadow-md px-5 py-3 flex items-center gap-3">
-              <div className="w-10 h-10 bg-teal-50 rounded-xl flex items-center justify-center">
-                <FlowerSVG color="#6BBFB5" className="w-6 h-7" />
-              </div>
-              <div>
-                <div className="font-script text-lg text-teal-500 leading-tight">Pauline Studio</div>
-                <div className="font-sans text-xs text-gray-400 tracking-wide">Caballito, CABA</div>
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
 
         {/* Treatment pills */}
-        <div className="mt-16 flex flex-wrap gap-2 justify-center">
+        <div className="mt-12 flex flex-wrap gap-2 justify-center">
           {treatments.map((t) => (
             <span
               key={t.label}
