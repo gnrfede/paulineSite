@@ -9,30 +9,48 @@ export function About() {
           {/* Images */}
           <div className="relative">
             <div className="grid grid-cols-2 gap-3">
-              <div className="rounded-2xl overflow-hidden aspect-[3/4] bg-cream-200 relative row-span-2">
+              <a
+                href="https://www.instagram.com/cosmiatra.paulaspinelli/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group rounded-2xl overflow-hidden aspect-[3/4] bg-cream-200 relative row-span-2 block"
+              >
                 <Image
                   src="/images/tratamiento 5.jpeg"
                   alt="Paula Spinelli trabajando"
                   fill
-                  className="object-cover"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
                 />
-              </div>
-              <div className="rounded-2xl overflow-hidden aspect-square bg-teal-50 relative">
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+              </a>
+              <a
+                href="https://www.instagram.com/cosmiatra.paulaspinelli/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group rounded-2xl overflow-hidden aspect-square bg-teal-50 relative block"
+              >
                 <Image
                   src="/images/tratamiento 6.jpeg"
                   alt="Tratamiento facial"
                   fill
-                  className="object-cover"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
                 />
-              </div>
-              <div className="rounded-2xl overflow-hidden aspect-square bg-blush-100 relative">
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+              </a>
+              <a
+                href="https://www.instagram.com/cosmiatra.paulaspinelli/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group rounded-2xl overflow-hidden aspect-square bg-blush-100 relative block"
+              >
                 <Image
                   src="/images/tratamiento 7.jpeg"
                   alt="Resultado"
                   fill
-                  className="object-cover"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
                 />
-              </div>
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+              </a>
             </div>
 
             {/* Quote card */}
