@@ -2,19 +2,19 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { sendReminderEmail } from "@/lib/email";
 
-// Called daily by Vercel Cron. Sends reminder emails for confirmed bookings tomorrow.
+// Called daily by Vercel Cron. Sends reminder emails for confirmed bookings in 2 days.
 export async function GET(req: NextRequest) {
   const auth = req.headers.get("authorization");
   if (auth !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  const tomorrowStr = tomorrow.toISOString().split("T")[0];
+  const target = new Date();
+  target.setDate(target.getDate() + 2);
+  const targetStr = target.toISOString().split("T")[0];
 
   const bookings = await prisma.booking.findMany({
-    where: { date: tomorrowStr, status: "CONFIRMED" },
+    where: { date: targetStr, status: "CONFIRMED" },
     include: { service: true },
   });
 
@@ -50,5 +50,5 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  return NextResponse.json({ date: tomorrowStr, total: bookings.length, results });
+  return NextResponse.json({ date: targetStr, total: bookings.length, results });
 }
