@@ -2,10 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { sendReminderEmail } from "@/lib/email";
 
-// Called daily by Vercel Cron. Sends reminder emails for confirmed bookings in 2 days.
+// Called daily by Vercel Cron at 12:00 UTC (9:00 AM Buenos Aires).
+// Sends reminder emails for confirmed bookings 2 days from now.
 export async function GET(req: NextRequest) {
-  const auth = req.headers.get("authorization");
-  if (auth !== `Bearer ${process.env.CRON_SECRET}`) {
+  // Vercel automatically adds x-vercel-cron: 1 to all cron requests.
+  // Also allow manual calls with CRON_SECRET for testing.
+  const isVercelCron = req.headers.get("x-vercel-cron") === "1";
+  const secret = process.env.CRON_SECRET;
+  const hasValidSecret = secret && req.headers.get("authorization") === `Bearer ${secret}`;
+
+  if (!isVercelCron && !hasValidSecret) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
