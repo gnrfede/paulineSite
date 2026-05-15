@@ -5,10 +5,12 @@ import { sendReminderEmail } from "@/lib/email";
 const MANUAL_TOKEN = "pauline-reminders-2026";
 
 // Called daily by Vercel Cron at 12:00 UTC (9:00 AM Buenos Aires).
-// Can also be triggered manually: GET /api/cron/reminders?token=pauline-reminders-2026
+// Manual trigger: GET /api/cron/reminders?token=pauline-reminders-2026
+// Override date:  GET /api/cron/reminders?token=pauline-reminders-2026&date=2026-05-16
 export async function GET(req: NextRequest) {
   const isVercelCron   = req.headers.get("x-vercel-cron") === "1";
-  const queryToken     = new URL(req.url).searchParams.get("token");
+  const params         = new URL(req.url).searchParams;
+  const queryToken     = params.get("token");
   const secret         = process.env.CRON_SECRET;
   const hasValidSecret = secret && req.headers.get("authorization") === `Bearer ${secret}`;
 
@@ -16,9 +18,15 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const target = new Date();
-  target.setDate(target.getDate() + 2);
-  const targetStr = target.toISOString().split("T")[0];
+  // Use ?date= override if provided, otherwise calculate 2 days ahead in Buenos Aires time (UTC-3)
+  let targetStr = params.get("date");
+  if (!targetStr) {
+    const now = new Date();
+    // Adjust to Buenos Aires (UTC-3)
+    now.setTime(now.getTime() - 3 * 60 * 60 * 1000);
+    now.setDate(now.getDate() + 2);
+    targetStr = now.toISOString().split("T")[0];
+  }
 
   const bookings = await prisma.booking.findMany({
     where: { date: targetStr, status: "CONFIRMED" },
