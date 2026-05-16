@@ -45,14 +45,6 @@ const ICONS: Record<number, React.ReactNode> = {
   ),
 };
 
-function formatPrice(price: number): string {
-  return new Intl.NumberFormat("es-AR", {
-    style: "currency",
-    currency: "ARS",
-    maximumFractionDigits: 0,
-  }).format(price);
-}
-
 interface ServicesProps {
   services: Service[];
 }
@@ -101,14 +93,7 @@ export function Services({ services }: ServicesProps) {
                 {srv.description}
               </p>
 
-              <div className="flex items-center justify-between pt-4 border-t border-cream-200">
-                {srv.price != null ? (
-                  <span className="font-sans text-sm font-semibold text-teal-600">
-                    {formatPrice(srv.price)}
-                  </span>
-                ) : (
-                  <span className="font-sans text-xs text-gray-400">Consultar precio</span>
-                )}
+              <div className="flex items-center justify-end pt-4 border-t border-cream-200">
                 <Link
                   href="/reservar"
                   className="font-sans text-xs text-teal-500 hover:text-teal-600 font-medium flex items-center gap-1 group-hover:gap-2 transition-all"
