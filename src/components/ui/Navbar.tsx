@@ -7,7 +7,6 @@ import { LogoFull } from "./LogoSVG";
 const navLinks = [
   { href: "/#about", label: "Sobre mí" },
   { href: "/#servicios", label: "Servicios" },
-  { href: "/#galeria", label: "Resultados" },
   { href: "/#contacto", label: "Contacto" },
 ];
 
