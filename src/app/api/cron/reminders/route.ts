@@ -5,16 +5,21 @@ import { sendReminderEmail } from "@/lib/email";
 const MANUAL_TOKEN = "pauline-reminders-2026";
 
 // Called daily by Vercel Cron at 12:00 UTC (9:00 AM Buenos Aires).
+// Vercel authenticates with Authorization: Bearer <CRON_SECRET> (auto-injected at build time).
 // Manual trigger: GET /api/cron/reminders?token=pauline-reminders-2026
-// Override date:  GET /api/cron/reminders?token=pauline-reminders-2026&date=2026-05-16
+// Override date:  GET /api/cron/reminders?token=pauline-reminders-2026&date=2026-05-18
 export async function GET(req: NextRequest) {
-  const isVercelCron   = req.headers.get("x-vercel-cron") === "1";
-  const params         = new URL(req.url).searchParams;
-  const queryToken     = params.get("token");
-  const secret         = process.env.CRON_SECRET;
-  const hasValidSecret = secret && req.headers.get("authorization") === `Bearer ${secret}`;
+  const params      = new URL(req.url).searchParams;
+  const queryToken  = params.get("token");
+  const cronSecret  = process.env.CRON_SECRET;
+  const authHeader  = req.headers.get("authorization");
 
-  if (!isVercelCron && queryToken !== MANUAL_TOKEN && !hasValidSecret) {
+  // Allow: Vercel cron (Bearer CRON_SECRET), manual token, or no-secret env (dev/unconfigured)
+  const fromVercel  = cronSecret ? authHeader === `Bearer ${cronSecret}` : false;
+  const fromManual  = queryToken === MANUAL_TOKEN;
+  const noSecretSet = !cronSecret; // allow if secret not yet configured
+
+  if (!fromVercel && !fromManual && !noSecretSet) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -22,8 +27,7 @@ export async function GET(req: NextRequest) {
   let targetStr = params.get("date");
   if (!targetStr) {
     const now = new Date();
-    // Adjust to Buenos Aires (UTC-3)
-    now.setTime(now.getTime() - 3 * 60 * 60 * 1000);
+    now.setTime(now.getTime() - 3 * 60 * 60 * 1000); // adjust to UTC-3
     now.setDate(now.getDate() + 2);
     targetStr = now.toISOString().split("T")[0];
   }
