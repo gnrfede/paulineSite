@@ -23,7 +23,6 @@ export function Footer() {
               {[
                 { href: "/#about", label: "Sobre mí" },
                 { href: "/#servicios", label: "Servicios" },
-                { href: "/#galeria", label: "Resultados" },
                 { href: "/#contacto", label: "Contacto" },
                 { href: "/reservar", label: "Reservar turno" },
                 { href: "/mis-turnos", label: "Mis turnos" },
