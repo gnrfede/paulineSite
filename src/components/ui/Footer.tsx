@@ -84,16 +84,10 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-10 pt-6 border-t border-cream-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="mt-10 pt-6 border-t border-cream-200 text-center">
           <p className="font-sans text-xs text-gray-400">
             © {new Date().getFullYear()} Pauline Studio · Paula Spinelli. Todos los derechos reservados.
           </p>
-          <Link
-            href="/admin/login"
-            className="font-sans text-xs text-gray-300 hover:text-gray-400 transition-colors"
-          >
-            Panel admin
-          </Link>
         </div>
       </div>
     </footer>
