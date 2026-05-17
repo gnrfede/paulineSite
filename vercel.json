@@ -2,7 +2,7 @@
   "buildCommand": "npx prisma db push && npm run build",
   "crons": [
     {
-      "path": "/api/cron/reminders",
+      "path": "/api/cron/reminders?token=pauline-reminders-2026",
       "schedule": "0 12 * * *"
     }
   ]
