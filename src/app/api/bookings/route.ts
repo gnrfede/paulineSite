@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });
     }
 
-    const { serviceIds, date, timeSlot, name, email, phone, notes } = parsed.data;
+    const { serviceIds, date, timeSlot, name, email, phone, notes, newsletterConsent } = parsed.data;
 
     // Fetch all selected services
     const services = await prisma.service.findMany({
@@ -64,8 +64,8 @@ export async function POST(req: NextRequest) {
 
     const booking = await prisma.booking.create({
       data: {
-        serviceId: serviceIds[0],             // primary for DB relation
-        serviceIds: JSON.stringify(serviceIds), // all selected
+        serviceId: serviceIds[0],
+        serviceIds: JSON.stringify(serviceIds),
         date,
         timeSlot,
         name,
@@ -78,6 +78,15 @@ export async function POST(req: NextRequest) {
     });
 
     const serviceNames = services.map((s) => s.name);
+
+    // Save newsletter consent if given
+    if (newsletterConsent) {
+      await prisma.newsletterConsent.upsert({
+        where: { email },
+        update: { active: true, consentedAt: new Date(), name },
+        create: { email, name, active: true },
+      });
+    }
 
     // Email al cliente
     try {

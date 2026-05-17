@@ -37,6 +37,16 @@ model BlockedDate {
   reason String?
 }
 
+model NewsletterConsent {
+  id          String    @id @default(cuid())
+  email       String    @unique
+  name        String
+  active      Boolean   @default(true)
+  consentedAt DateTime  @default(now())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
 // status: "PENDING" | "CONFIRMED" | "REJECTED" | "CANCELLED"
 model Booking {
   id         String   @id @default(cuid())

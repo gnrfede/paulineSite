@@ -5,15 +5,16 @@ import { getAdminFromCookie } from "@/lib/auth";
 const EXCLUDED_EMAILS = ["gnrfede@gmail.com", "spinellipaulaluciana@gmail.com"];
 
 export interface ClientStat {
-  email:        string;
-  name:         string;
-  phone:        string;
-  totalVisits:  number;
-  lastBooking:  string;
-  daysSinceLast: number;
-  nextBooking:  string | null;
-  topService:   string;
-  visits:       { date: string; timeSlot: string; service: string }[];
+  email:             string;
+  name:              string;
+  phone:             string;
+  totalVisits:       number;
+  lastBooking:       string;
+  daysSinceLast:     number;
+  nextBooking:       string | null;
+  topService:        string;
+  newsletterConsent: boolean;
+  visits:            { date: string; timeSlot: string; service: string }[];
 }
 
 function mostFrequent(arr: string[]): string {
@@ -26,15 +27,19 @@ export async function GET() {
   const admin = await getAdminFromCookie();
   if (!admin) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
 
-  const bookings = await prisma.booking.findMany({
-    where: {
-      status: "CONFIRMED",
-      email: { notIn: EXCLUDED_EMAILS },
-    },
-    include: { service: true },
-    orderBy: { date: "desc" },
-  });
+  const [bookings, consents] = await Promise.all([
+    prisma.booking.findMany({
+      where: { status: "CONFIRMED", email: { notIn: EXCLUDED_EMAILS } },
+      include: { service: true },
+      orderBy: { date: "desc" },
+    }),
+    prisma.newsletterConsent.findMany({
+      where: { active: true },
+      select: { email: true },
+    }),
+  ]);
 
+  const consentSet = new Set(consents.map((c) => c.email));
   const today = new Date().toISOString().split("T")[0];
 
   const map = new Map<string, {
@@ -46,11 +51,7 @@ export async function GET() {
     if (!map.has(b.email)) {
       map.set(b.email, { email: b.email, name: b.name, phone: b.phone, visits: [] });
     }
-    map.get(b.email)!.visits.push({
-      date: b.date,
-      timeSlot: b.timeSlot,
-      service: b.service.name,
-    });
+    map.get(b.email)!.visits.push({ date: b.date, timeSlot: b.timeSlot, service: b.service.name });
   }
 
   const clients: ClientStat[] = Array.from(map.values()).map((c) => {
@@ -59,7 +60,6 @@ export async function GET() {
     const future     = sorted.filter((v) => v.date > today);
     const lastPast   = past[0]?.date ?? null;
     const nextFuture = future.length > 0 ? [...future].sort((a, b) => a.date.localeCompare(b.date))[0].date : null;
-    const lastBooking = sorted[0].date;
 
     let daysSinceLast = -1;
     if (lastPast) {
@@ -68,15 +68,16 @@ export async function GET() {
     }
 
     return {
-      email:         c.email,
-      name:          c.name,
-      phone:         c.phone,
-      totalVisits:   past.length,
-      lastBooking,
+      email:             c.email,
+      name:              c.name,
+      phone:             c.phone,
+      totalVisits:       past.length,
+      lastBooking:       sorted[0].date,
       daysSinceLast,
-      nextBooking:   nextFuture,
-      topService:    mostFrequent(c.visits.map((v) => v.service)),
-      visits:        sorted,
+      nextBooking:       nextFuture,
+      topService:        mostFrequent(c.visits.map((v) => v.service)),
+      newsletterConsent: consentSet.has(c.email),
+      visits:            sorted,
     };
   });
 

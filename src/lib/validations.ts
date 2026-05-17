@@ -14,6 +14,7 @@ export const createBookingSchema = z.object({
     .max(20)
     .regex(/^[\d\s\+\-\(\)]+$/, "Teléfono inválido"),
   notes: z.string().max(500).optional(),
+  newsletterConsent: z.boolean().optional(),
 });
 
 export const updateBookingSchema = z.object({

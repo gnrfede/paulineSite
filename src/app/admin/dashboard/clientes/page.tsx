@@ -11,14 +11,10 @@ function fmtDate(s: string) {
 }
 
 function RiskBadge({ days, hasNext }: { days: number; hasNext: boolean }) {
-  if (hasNext)
-    return <span className="inline-flex items-center gap-1 bg-teal-50 text-teal-700 text-xs font-sans px-2 py-0.5 rounded-full">Turno próximo</span>;
-  if (days < 0)
-    return <span className="inline-flex items-center gap-1 bg-gray-100 text-gray-400 text-xs font-sans px-2 py-0.5 rounded-full">Sin visitas</span>;
-  if (days <= 30)
-    return <span className="inline-flex items-center gap-1 bg-teal-50 text-teal-700 text-xs font-sans px-2 py-0.5 rounded-full">Activa — {days}d</span>;
-  if (days <= 60)
-    return <span className="inline-flex items-center gap-1 bg-amber-50 text-amber-700 text-xs font-sans px-2 py-0.5 rounded-full">Hace {days}d</span>;
+  if (hasNext) return <span className="inline-flex items-center gap-1 bg-teal-50 text-teal-700 text-xs font-sans px-2 py-0.5 rounded-full">Turno próximo</span>;
+  if (days < 0) return <span className="inline-flex items-center gap-1 bg-gray-100 text-gray-400 text-xs font-sans px-2 py-0.5 rounded-full">Sin visitas</span>;
+  if (days <= 30) return <span className="inline-flex items-center gap-1 bg-teal-50 text-teal-700 text-xs font-sans px-2 py-0.5 rounded-full">Activa — {days}d</span>;
+  if (days <= 60) return <span className="inline-flex items-center gap-1 bg-amber-50 text-amber-700 text-xs font-sans px-2 py-0.5 rounded-full">Hace {days}d</span>;
   return <span className="inline-flex items-center gap-1 bg-red-50 text-red-600 text-xs font-sans px-2 py-0.5 rounded-full font-medium">En riesgo — {days}d</span>;
 }
 
@@ -36,26 +32,22 @@ export default function ClientesPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  const filtered = useMemo(() => {
-    return clients.filter((c) => {
-      if (search) {
-        const q = search.toLowerCase();
-        if (!c.name.toLowerCase().includes(q) && !c.email.toLowerCase().includes(q)) return false;
-      }
-      if (filter === "active") return c.daysSinceLast >= 0 && c.daysSinceLast <= 30 && !c.nextBooking;
-      if (filter === "risk")   return c.daysSinceLast > 60 && !c.nextBooking;
-      if (filter === "next")   return !!c.nextBooking;
-      return true;
-    });
-  }, [clients, search, filter]);
+  const filtered = useMemo(() => clients.filter((c) => {
+    if (search) {
+      const q = search.toLowerCase();
+      if (!c.name.toLowerCase().includes(q) && !c.email.toLowerCase().includes(q)) return false;
+    }
+    if (filter === "active") return c.daysSinceLast >= 0 && c.daysSinceLast <= 30 && !c.nextBooking;
+    if (filter === "risk")   return c.daysSinceLast > 60 && !c.nextBooking;
+    if (filter === "next")   return !!c.nextBooking;
+    return true;
+  }), [clients, search, filter]);
 
   const stats = useMemo(() => ({
     total:  clients.length,
     risk:   clients.filter((c) => c.daysSinceLast > 60 && !c.nextBooking).length,
     next:   clients.filter((c) => !!c.nextBooking).length,
-    avgVisits: clients.length
-      ? Math.round(clients.reduce((s, c) => s + c.totalVisits, 0) / clients.length * 10) / 10
-      : 0,
+    avgVisits: clients.length ? Math.round(clients.reduce((s, c) => s + c.totalVisits, 0) / clients.length * 10) / 10 : 0,
   }), [clients]);
 
   return (
@@ -127,12 +119,20 @@ export default function ClientesPage() {
                       <h3 className="font-sans text-sm font-medium text-gray-800">{c.name}</h3>
                       <RiskBadge days={c.daysSinceLast} hasNext={!!c.nextBooking} />
                     </div>
-                    <p className="font-sans text-xs text-gray-400 mt-0.5">{c.email} · {c.phone}</p>
+                    <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
+                      <p className="font-sans text-xs text-gray-400">{c.email} · {c.phone}</p>
+                      {c.newsletterConsent && (
+                        <span className="inline-flex items-center gap-1 bg-teal-50 text-teal-600 text-[10px] font-sans px-1.5 py-0.5 rounded-full border border-teal-200">
+                          <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                          </svg>
+                          Newsletter
+                        </span>
+                      )}
+                    </div>
                   </div>
                   <div className="shrink-0 text-right hidden sm:block">
-                    <p className="font-sans text-xs text-gray-500">
-                      <span className="font-medium text-gray-700">{c.totalVisits}</span> visita{c.totalVisits !== 1 ? "s" : ""}
-                    </p>
+                    <p className="font-sans text-xs text-gray-500"><span className="font-medium text-gray-700">{c.totalVisits}</span> visita{c.totalVisits !== 1 ? "s" : ""}</p>
                     <p className="font-sans text-xs text-gray-400 mt-0.5">{c.topService}</p>
                   </div>
                   <svg className={`w-4 h-4 text-gray-400 shrink-0 transition-transform ${expanded === c.email ? "rotate-180" : ""}`}
@@ -145,28 +145,16 @@ export default function ClientesPage() {
               {expanded === c.email && (
                 <div className="border-t border-cream-200 px-5 pb-5 pt-4">
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
-                    <div>
-                      <p className="font-sans text-xs text-gray-400">Visitas totales</p>
-                      <p className="font-sans text-sm font-medium text-gray-700">{c.totalVisits}</p>
-                    </div>
-                    <div>
-                      <p className="font-sans text-xs text-gray-400">Servicio favorito</p>
-                      <p className="font-sans text-sm font-medium text-gray-700">{c.topService}</p>
-                    </div>
+                    <div><p className="font-sans text-xs text-gray-400">Visitas totales</p><p className="font-sans text-sm font-medium text-gray-700">{c.totalVisits}</p></div>
+                    <div><p className="font-sans text-xs text-gray-400">Servicio favorito</p><p className="font-sans text-sm font-medium text-gray-700">{c.topService}</p></div>
                     <div>
                       <p className="font-sans text-xs text-gray-400">Última visita</p>
                       <p className="font-sans text-sm font-medium text-gray-700">
                         {c.daysSinceLast >= 0 ? fmtDate(c.visits.find(v => v.date <= new Date().toISOString().split("T")[0])?.date ?? c.lastBooking) : "—"}
                       </p>
                     </div>
-                    <div>
-                      <p className="font-sans text-xs text-gray-400">Próximo turno</p>
-                      <p className="font-sans text-sm font-medium text-teal-600">
-                        {c.nextBooking ? fmtDate(c.nextBooking) : "—"}
-                      </p>
-                    </div>
+                    <div><p className="font-sans text-xs text-gray-400">Próximo turno</p><p className="font-sans text-sm font-medium text-teal-600">{c.nextBooking ? fmtDate(c.nextBooking) : "—"}</p></div>
                   </div>
-
                   <p className="font-sans text-xs font-medium tracking-[0.1em] uppercase text-gray-400 mb-2">Historial</p>
                   <div className="space-y-1.5 max-h-48 overflow-y-auto">
                     {c.visits.map((v, i) => {
@@ -184,7 +172,6 @@ export default function ClientesPage() {
                       );
                     })}
                   </div>
-
                   <div className="mt-4 flex gap-2">
                     <a href={`https://wa.me/${c.phone.replace(/\D/g, "")}`} target="_blank" rel="noopener noreferrer"
                       className="font-sans text-xs text-teal-600 hover:text-teal-700 px-3 py-1.5 rounded-full border border-teal-200 bg-teal-50 hover:bg-teal-100 transition-colors flex items-center gap-1.5">
