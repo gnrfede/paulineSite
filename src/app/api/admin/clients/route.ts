@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { getAdminFromCookie } from "@/lib/auth";
 
-const EXCLUDED_EMAILS = ["gnrfede@gmail.com"];
+const EXCLUDED_EMAILS = ["gnrfede@gmail.com", "spinellipaulaluciana@gmail.com"];
 
 export interface ClientStat {
   email:        string;
