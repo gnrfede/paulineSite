@@ -42,6 +42,7 @@ export const createScheduleSchema = z.object({
   dayOfWeek: z.number().int().min(0).max(6),
   startTime: z.string().regex(/^\d{2}:\d{2}$/),
   endTime: z.string().regex(/^\d{2}:\d{2}$/),
+  slots: z.string().nullable().optional(),
   active: z.boolean().optional(),
 });
 
